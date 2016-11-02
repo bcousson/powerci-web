@@ -1,0 +1,413 @@
+<h3 class="page-title"> Groups
+    <small>Detail of group</small>
+</h3>
+<div class="page-bar">
+    <ul class="page-breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="index.html">Home</a>
+            <i class="fa fa-angle-right"></i>
+        </li>
+        <li>
+            <span>Group detail</span>
+        </li>
+    </ul>
+    <div class="page-toolbar">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li>
+                    <a href="#/newGroup">
+                        <i class="icon-plus"></i> Add new group</a>
+                </li>
+                <li>
+                    <a href="#/editGroup/{{group._id}}">
+                        <i class="fa fa-edit"></i> Edit group</a>
+                </li>
+                <li>
+                    <a href="#/newGroup">
+                        <i class="icon-plus"></i> Add User</a>
+                </li>
+                <li>
+                    <a href="#/newGroup">
+                        <i class="icon-plus"></i> Add Role</a>
+                </li>
+                <li>
+                    <a href="#/newGroup">
+                        <i class="icon-plus"></i> Add board instance</a>
+                </li>
+                <li class="divider"> </li>
+                <li>
+                    <a href="#/deleteGroup/{{group._id}}">
+                        <i class="fa fa-trash-o font-red"></i> Delete group</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- BEGIN : OVERLAY -->
+<div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-show="group == null">
+        Group not found!
+    </div>
+    <div class="col-lg-8" ng-show="group != null">
+        <div class="col-md-14 col-sm-14">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet box red">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs"></i>List users</div>
+                    <div class="actions">
+                        <a href="javascript:;" class="btn btn-default btn-sm">
+                            <i class="fa fa-print"></i> Print </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="btn-group" style="float: right; margin-bottom: 10px;">
+                        <button type="button" class="btn btn-circle green dropdown-toggle" data-toggle="dropdown" id="addUser">
+                            <i class="fa fa-plus"></i>&nbsp;
+                            <span class="hidden-sm hidden-xs">New&nbsp;</span>&nbsp;
+                        </button>
+                    </div>
+                    <table class="table table-striped table-bordered table-hover table-checkable order-column table-board-instance" id="sample_3">
+                        <thead>
+                            <tr>
+                                <th> Status </th>
+                                <th> Avatar</th>
+                                <th> Username </th>
+                                <th> Email </th>
+                                <th> Role </th>
+                                <th style="text-align: center; width: 18%;"> Action </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr  ng-repeat="user_role in group.users_role">
+                                <td class="vertical-align_mdl">
+                                    <input type="checkbox" name="my-checkbox" checked>
+                                </td>
+                                <td style="text-align: center; width: 10%; vertical-align: middle;">
+                                        <img ng-show="user_role.user.avatar" ng-src="{{user_role.user.avatar}}" class="img-table-listUser" alt="">
+                                    </td>
+                                <td >
+                                    <a href="#"><h5>{{user_role.user.username}}</h5></a>
+                                </td>
+                                <td>
+                                    <h4 class="text-center">{{user_role.user.email}}</h4>
+                                </td>
+                                <td>
+                                    <h4 class="text-center text-success">{{user_role.role.title}}</h4>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a ng-click="edit(user_role)" class="btn btn-outline btn-circle btn-sm purple">
+                                        <i class="fa fa-edit"></i></a>
+                                    <a ng-click="contact(user_role.user.username)" class="btn btn-outline btn-circle red btn-sm blue" id="ContactUser">
+                                        <i class="fa fa-envelope"></i></a>
+                                    <a ng-click="remove(user_role.user._id)" class="btn btn-outline btn-circle dark btn-sm black">
+                                        <i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+        <div class="col-md-14 col-sm-14">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet box red">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs"></i>List roles</div>
+                    <div class="actions">
+                        <a href="javascript:;" class="btn btn-default btn-sm">
+                            <i class="fa fa-print"></i> Print </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="btn-group" style="float: right; margin-bottom: 10px;">
+                        <button type="button" class="btn btn-circle green dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-plus"></i>&nbsp;
+                            <span class="hidden-sm hidden-xs">New&nbsp;</span>&nbsp;
+                        </button>
+                    </div>
+
+                    <table class="table table-striped table-bordered table-hover table-checkable order-column table-board-instance" id="sample_3">
+                        <thead>
+                            <tr>
+                                <th> Status </th>
+                                <th> Title </th>
+                                <th> Description </th>
+                                <th> List methods </th>
+                                <th style="text-align: center; width: 18%;"> Action </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr  ng-repeat="role in group.list_roles">
+                                <td class="vertical-align_mdl">
+                                    <input type="checkbox" name="my-checkbox" checked>
+                                </td>
+                                <td >
+                                    <a href="#"><h5>{{role.title}}</h5></a>
+                                </td>
+                                <td>
+                                    <h4 class="text-center">{{role.description}}</h4>
+                                </td>
+                                <td>
+                                    <h4 class="text-center text-success" ng-repeat="action in role.actions_list">{{action.title}}</h4>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="javascript:;" class="btn btn-outline btn-circle btn-sm purple">
+                                        <i class="fa fa-edit"></i></a>
+                                    <a href="javascript:;" class="btn btn-outline btn-circle dark btn-sm black">
+                                        <i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet box red">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs"></i>List boards instance</div>
+                    <div class="actions">
+                        <a href="javascript:;" class="btn btn-default btn-sm">
+                            <i class="fa fa-print"></i> Print </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="btn-group" style="float: right; margin-bottom: 10px;">
+                        <button type="button" class="btn btn-circle green dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-plus"></i>&nbsp;
+                            <span class="hidden-sm hidden-xs">New&nbsp;</span>&nbsp;
+                        </button>
+                    </div>
+
+                    <table class="table table-striped table-bordered table-hover table-checkable order-column table-board-instance" id="sample_3">
+                        <thead>
+                            <tr>
+                                <th> Status </th>
+                                <th> Label </th>
+                                <th> Description </th>
+                                <th> Picture </th>
+                                <th style="text-align: center; width: 18%;"> Action </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr  ng-repeat="boardInstance in group.board_instances">
+                                <td class="vertical-align_mdl">
+                                    <input type="checkbox" name="my-checkbox" checked>
+                                </td>
+                                <td >
+                                    <a href="#/boardInstance/{{boardInstance._id}}"><h5>{{boardInstance.label}}</h5></a>
+                                </td>
+                                <td>
+                                    <h4 class="text-center">{{boardInstance.description}}</h4>
+                                </td>
+                                <td style="text-align: center; width: 20%; vertical-align: middle;">
+                                    <img ng-show="boardInstance.image" ng-src="{{boardInstance.image}}" class="img-table" alt="">
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="javascript:;" class="btn btn-outline btn-circle btn-sm purple">
+                                        <i class="fa fa-edit"></i></a>
+                                    <a href="javascript:;" class="btn btn-outline btn-circle dark btn-sm black">
+                                        <i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+    <div class="col-lg-4" ng-show="group != null">
+        <div class="portlet light portlet-fit" style="min-height: 1424px;">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class=" icon-layers font-green"></i>
+                    <span class="caption-subject font-green bold uppercase">{{group.name}}</span>
+                    <div class="caption-desc font-grey-cascade"> 
+                        <a href="#">
+                            <span class="photo">
+                                <img ng-show="group.created_by.avatar" ng-src="{{group.created_by.avatar}}" class="img-circle" alt=""> </span>
+                            <span class="subject">
+                                <small>Created by: <span class="font-bold">{{group.created_by.last_name}} {{group.created_by.first_name}}</span> </small><br>
+                                <small class="text-muted" ng-bind="group.created_on | date:'MM.dd.yyyy, hh:mm a'"></small>
+                            </span>
+                            
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="mt-element-list">
+                    <div class="mt-list-head list-todo dark">
+                        <div class="list-head-title-container">
+                            <h3 class="list-title">Group informations</h3>
+                            
+                        </div>
+                    </div>
+                    <div class="mt-list-container list-todo">
+                        <div class="list-todo-line red"></div>
+                        <ul>
+                            <li class="mt-list-item">
+                                <div class="list-todo-icon bg-white font-blue-steel">
+                                    <i class="fa fa-folder-open"></i>
+                                </div>
+                                <div class="list-todo-item blue-steel">
+                                    <a class="list-toggle-container font-white" data-toggle="collapse" href="#task-1-2" aria-expanded="false">
+                                        <div class="list-toggle done uppercase">
+                                            <div class="list-toggle-title bold">Description</div>
+                                            <div class="list-toggle-title-bar"></div>
+                                        </div>
+                                    </a>
+                                    <div class="task-list panel-collapse collapse in" id="task-1-2">
+                                        <ul>
+                                            <li class="task-list-item done">
+                                                <div class="task-content">
+                                                    <p ng-bind-html="group.description"></p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="modal modal-dialog groupAddUser popUp" style="display: block; padding-right: 15px; display: none">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="bootbox-close-button close pop-close" data-dismiss="modal" aria-hidden="true">×</button>
+                <div class="modal-title">Add User</div>
+                <div class="bootbox-body"> 
+                    <input type="text" class="form-control" placeholder="Search by username, full name or email address..." ng-model="requestString" style="width:64%; display: initial; !important">
+                    <a href="javascript:;" class="btn submit">
+                        <i class="icon-magnifier"></i>
+                    </a>
+                    <div style="margin-top:10px;">
+                        <table ng-show="users.length > 0" class="table table-striped table-bordered table-hover table-checkable order-column table-board-instance listUser" id="sample_3">
+                            <thead>
+                                <tr>
+                                    <th> Picture </th>
+                                    <th> Username </th>
+                                    <th> First name </th>
+                                    <th> Last name </th>
+                                    <th> Role </th>
+                                    <th> Action </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr  ng-repeat="user in users">
+                                    <td style="text-align: center; width: 20%; vertical-align: middle;">
+                                        <img ng-show="user.avatar" ng-src="{{user.avatar}}" class="img-table-listUser" alt="">
+                                    </td>
+                                    <td class="vertical-align_mdl">
+                                        <h4 class="text-center">{{user.username}}</h4>
+                                    </td>
+                                    <td >
+                                        <h4 class="text-center">{{user.first_name}}</h4>
+                                    </td>
+                                    <td>
+                                        <h4 class="text-center">{{user.last_name}}</h4>
+                                    </td>
+                                    <td>
+                                        <select id="{{user._id}}" ng-change="changed(user._id)" ng-model="defaultRole" ng-options="role.title for role in list_roles track by role._id" ></select>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <a ng-click="add(user)" class="btn btn-outline btn-circle btn-sm green add">
+                                            <i class="fa fa-plus"></i></a>
+                                        
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bb-handler="ok" type="button" class="btn btn-warning pop-close">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+     <div class="modal modal-dialog groupContactUser popUp" style="display: block; padding-right: 15px; display: none">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="bootbox-close-button close pop-close" data-dismiss="modal" aria-hidden="true">×</button>
+                <div class="modal-title">Contact {{contactUsername}}</div>
+                <div class="bootbox-body"> 
+                    <div style="margin-top:10px;">
+                        <TEXTAREA type="text" class="form-control" placeholder="Your message..." ng-model="requestString" style="width:64%; display: initial; !important"></TEXTAREA>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bb-handler="ok" type="button" class="btn btn-primary">Send</button>
+                <button data-bb-handler="ok" type="button" class="btn btn-warning pop-close">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-dialog groupEditUser popUp" style="display: block; padding-right: 15px; display: none">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="bootbox-close-button close pop-close" data-dismiss="modal" aria-hidden="true">×</button>
+                <div class="modal-title">Edit User</div>
+                <div class="bootbox-body"> 
+                    <div style="margin-top:10px;">
+                        <table class="table table-striped table-bordered table-hover table-checkable order-column table-board-instance" id="sample_3">
+                            <thead>
+                                <tr>
+                                    <th> Picture </th>
+                                    <th> Username </th>
+                                    <th> Role </th>
+                                    <th> Action </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align: center; width: 10%; vertical-align: middle;">
+                                        <img ng-show="editUser.avatar" ng-src="{{editUser.avatar}}" class="img-table-listUser" alt="">
+                                    </td>
+                                    <td class="vertical-align_mdl">
+                                        <h4 class="text-center">{{editUser.username}}</h4>
+                                    </td>
+                                    <td>
+                                        <select id="{{editUser._id}}" ng-change="changed(editUser._id)" ng-model="defaultRole" ng-options="role.title for role in group.list_roles track by role._id" ></select>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <a ng-click="editUsers(editUser._id)" class="btn btn-outline btn-circle btn-sm green">
+                                            <i class="fa fa-edit"></i></a>
+                                        
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bb-handler="ok" type="button" class="btn btn-warning pop-close">Cancel</button>
+            </div>
+        </div>
+    </div>
+<div class="bootbox modal fade bootbox-alert in groupAddUser pop-close popUp" tabindex="-1" role="dialog">
+</div>
+<!-- END CONTENT -->
+<script type="text/javascript">
+    $("[name='my-checkbox']").bootstrapSwitch({size: "mini", onColor: "success", offColor: "warning"});
+</script>
+
+
+<!-- END : OVERLAY -->
+                

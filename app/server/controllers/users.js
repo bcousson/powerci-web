@@ -1,0 +1,530 @@
+// Import entities
+var User 			= require('../models/user');
+var Forgot 			= require('../models/forgot');
+var Customer 		= require('../models/customer');
+var Group 			= require('../models/group');
+var UserGroupRoles 	= require('../models/user_group_roles');
+var UseRoleBoardInstance = require('../models/user_role_board_instances');
+var jwt 			= require('jsonwebtoken');
+
+// Import Modules
+var Promise = require('bluebird');
+var crypto = require('crypto');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+
+//Mongoose
+var mongoose = require('mongoose');
+var Schema		= mongoose.Schema, ObjectId = Schema.ObjectId;
+
+// Utils
+var Utils = require('../utils');
+
+// Create new user
+exports.createUser = function(req, res) {
+
+	// Technical title : 
+	var tachnical_title = "create_user";
+
+	// Check fields
+	var missing = Utils.checkFields(req.body, ["first_name", "last_name", "username", "password", "email"]);
+	if (missing.length != 0)
+		return Utils.sendMissingParams(res, missing);
+
+	// Check if email is already used
+	Promise.any([Utils.getUserByEmail(req.body.email)]).then(function(userByMail) {
+		if(userByMail != null && userByMail.length > 0) {
+		 	return res.json({message: Utils.Constants._MSG_MAIL_EXIST_, details: "This email is already used", code: Utils.Constants._CODE_KO_});
+		} else {
+
+			// Check if username is already used
+			Utils.getUserByUserName(req.body.username).then(function(userByUsername) {
+				if(userByUsername != null && userByUsername.length > 0) 
+					 return res.send({message: Utils.Constants._MSG_USERNAME_EXIST_, details: "This username is already used", code: Utils.Constants._CODE_KO_});
+				else  {
+
+					var user = new User();
+					var shasum = crypto.createHash('sha1');
+					// Mappeig params
+					user.first_name		= req.body.first_name;
+					user.last_name		= req.body.last_name;
+					user.username 		= req.body.username;
+					shasum.update(req.body.password);
+					user.password 		= shasum.digest('hex');
+					user.email 			= req.body.email;
+					user.phone 			= req.body.phone;
+					user.isAdmin 		= req.body.isAdmin;
+					user.customers_id 	= req.body.customers_id;
+					user.avatar 		= req.body.avatar;
+
+					// Get welcome mail template
+					try {
+						var mail_text = Utils.loadFile(global.config.mail.welcomeMail.templates.text);
+						var mail_html = Utils.loadFile(global.config.mail.welcomeMail.templates.html);
+					} catch (err) {
+						console.log(err);
+						return res.send({message: 'Error while fetching mail template, action canceled', details: err, code: Utils.Constants._CODE_KO_});
+					}
+					// Save user
+					user.save(function(err) {
+						if (err)
+							return Utils.sendError(res, err);
+
+						// Send welcome mail
+						if (req.body.sendWelcomeMail) {
+							var mailOptions = {
+								from: '"' + global.config.mail.welcomeMail.settings.fromName+'"<'+global.config.mail.welcomeMail.settings.fromAddress+'>',
+								to: user.email,
+								subject: global.config.mail.welcomeMail.settings.subject,
+								text: Utils.parseWelcomeMail(mail_text, user, req),
+								html: Utils.parseWelcomeMail(mail_html, user, req)
+							};
+						}
+						
+						res.json({message: Utils.Constants._MSG_CREATED_, details: user, code: Utils.Constants._CODE_OK_});
+						Utils.getMailTransporter().sendMail(mailOptions, function(error, info) {
+							if (error)
+								return console.log(error);
+							console.log('Message sent: ' + info.response);
+						});
+					});	
+				}
+
+			});
+
+		}
+
+	});
+};
+
+// Get all users
+exports.getUsers = function(req, res) {
+	// Technical title : 
+	var tachnical_title = "get_users";
+
+	// Check if user have permission
+	Utils.isAuthorized(req, tachnical_title).then(function(isAuthorized) {
+		if(isAuthorized) {
+			User.find({}, function(err, users) {
+				if (err)
+					return Utils.sendError(res, err);
+				res.json({message: Utils.Constants._MSG_OK_, details: users, code: Utils.Constants._CODE_OK_});
+			});
+		} else {
+			Utils.sendUnauthorized(req, res);
+			return;
+		}
+	});
+};
+
+// Get user by Id
+exports.getUserById = function(req, res) {
+
+	// Technical title : 
+	var tachnical_title = "get_user_by_id";
+
+	// Check if user have permission
+	Utils.isAuthorized(req, tachnical_title).then(function(isAuthorized) {
+
+		if(isAuthorized) {
+
+			User.findById(req.params.user_id, function(err, user) {
+				if (err)
+					return Utils.sendError(res, err);
+
+				//Send result
+				res.json({message: Utils.Constants._MSG_OK_, details: user, code: Utils.Constants._CODE_OK_});
+			});
+		
+		} else {
+			Utils.sendUnauthorized(req, res);
+			return;
+		}
+	});
+};
+
+// Find user
+exports.findUser = function(req, res) {
+	// Technical title : 
+	var tachnical_title = "find_user";
+
+	// Check if user have permission
+	Utils.isAuthorized(req, tachnical_title).then(function(isAuthorized) {
+		if(isAuthorized) {
+
+			if(req.query.id_group != null && req.query.id_group != "") {
+				var list_id_users = [];
+
+					var findGroupUsersId = new Promise(function(resolve, reject) {
+							Group.findOne({_id: req.query.id_group}, 'users_role', function(err, groups){
+								if(err)
+									reject(err);
+								groups.users_role.forEach(function(userRole) {
+									if(userRole.user != null && userRole.user != "") {
+										list_id_users.push(userRole.user);
+									}
+								});
+								resolve(list_id_users);
+							});
+						});
+
+					if(req.query.not == Utils.Constants._TRUE_) {
+						Promise.all([findGroupUsersId]).then(function(list_id_users) {
+
+							if(Utils.isNotEmpty(req.query.requestString)) {
+
+									User.find({ $and: [ {
+													_id : { $not: { $in : list_id_users.toString().split(',').map(function(o){ 
+														 return mongoose.Types.ObjectId(o.toString()); }) }}
+
+												}, 
+											{
+										$or :[
+											{username: new RegExp('.*' + req.query.requestString + '.*',"i")}, 
+											{first_name: new RegExp('.*' + req.query.requestString + '.*',"i")}, 
+											{last_name: new RegExp('.*' + req.query.requestString + '.*',"i")}, 
+											{email: new RegExp('.*' + req.query.requestString + '.*',"i")}
+										]}
+										]
+									}, function(err, user) {
+										if (err)
+											return Utils.sendError(res, err);
+
+										//Send result
+										res.json({message: Utils.Constants._MSG_OK_, details: user, code: Utils.Constants._CODE_OK_});
+									});
+							} else {
+									User.find({
+												_id : { 
+														$not: { 
+																$in : list_id_users.toString().split(',').map(function(o){ 
+																	 return mongoose.Types.ObjectId(o.toString()); }) 
+															}
+													}
+										}, function(err, user) {
+											if (err)
+												return Utils.sendError(res, err);
+
+											//Send result
+											res.json({message: Utils.Constants._MSG_OK_, details: user, code: Utils.Constants._CODE_OK_});
+										});
+							}
+						});
+
+					} else {
+						res.json({message: Utils.Constants._MSG_OK_, details: "not = false", code: Utils.Constants._CODE_OK_});
+					}
+			} else {
+
+				User.find({$or :[
+								{username: new RegExp('.*' + req.query.requestString + '.*',"i")}, 
+								{first_name: new RegExp('.*' + req.query.requestString + '.*',"i")}, 
+								{last_name: new RegExp('.*' + req.query.requestString + '.*',"i")}, 
+								{email: new RegExp('.*' + req.query.requestString + '.*',"i")}
+							]
+						}, function(err, user) {
+				if (err)
+					return Utils.sendError(res, err);
+
+				//Send result
+				res.json({message: Utils.Constants._MSG_OK_, details: user, code: Utils.Constants._CODE_OK_});
+			});
+		}
+		
+		} else {
+			Utils.sendUnauthorized(req, res);
+			return;
+		}
+	});
+};
+
+// Update user
+exports.updateUser = function(req, res) {
+	
+	// Technical title : 
+	var tachnical_title = "update_user";
+
+	// Check if user have permission
+	Utils.isAuthorized(req, tachnical_title).then(function(isAuthorized) {
+
+		if(isAuthorized) {
+			
+			var shasum = crypto.createHash('sha1');
+
+			User.findById(req.params.user_id, function(err, user) { 
+				if (err)
+					return Utils.sendError(res, err);
+
+				if (req.body.hasOwnProperty('email'))
+					user.email = req.body.email;
+				if (req.body.hasOwnProperty('password')) {
+					shasum.update(req.body.password);
+					user.password = shasum.digest('hex');
+				}
+				if (req.body.hasOwnProperty('first_name'))
+					user.first_name		= req.body.first_name;
+				if (req.body.hasOwnProperty('last_name'))
+					user.last_name		= req.body.last_name;
+				if (req.body.hasOwnProperty('username'))
+					user.username 		= req.body.username;
+				if (req.body.hasOwnProperty('phone'))
+					user.phone 			= req.body.phone;
+				if (req.body.hasOwnProperty('isAdmin'))
+					user.isAdmin 		= req.body.isAdmin;
+				if (req.body.hasOwnProperty('avatar'))
+					user.avatar 		= req.body.avatar;
+				
+				if (req.body.hasOwnProperty('customers_id') || req.body.hasOwnProperty('isAdmin')) {
+					Utils.checkToken(req, res, true).then(function(result) {
+						if (req.body.hasOwnProperty('customers_id'))
+							user.customers_id = req.body.customers_id;
+						if (req.body.hasOwnProperty('isAdmin'))
+							user.isAdmin = req.body.isAdmin;
+						user.save(function(err) {
+							if (err)
+								return Utils.SendError(res, err);
+							res.json({message: Utils.Constants._MSG_MODIFIED_, details: user, code: Utils.Constants._CODE_MODIFIED_});
+						});
+					});
+				} else {
+					user.save(function(err) {
+						if (err)
+							return Utils.SendError(res, err);
+						res.json({message: Utils.Constants._MSG_MODIFIED_, details: user, code: Utils.Constants._CODE_MODIFIED_});
+					});
+				}
+			});
+		} else {
+			Utils.sendUnauthorized(req, res);
+			return;
+		}
+});
+};
+
+// Delete User
+exports.deleteUser = function(req, res) {
+
+	// Technical title : 
+	var tachnical_title = "delete_user";
+
+	// Check if user have permission
+	Utils.isAuthorized(req, tachnical_title).then(function(isAuthorized) {
+
+		if(isAuthorized) {
+
+			var deleteUserFromBoardInstances = new Promise(function(resolve, reject) {
+		        // Delete user from all board instances 
+				UseRoleBoardInstance.find({user_id: req.params.user_id}, function(err, listUserRoleBI) {
+					if(err) 
+						reject(err);
+					if(listUserRoleBI.length > 0) {
+
+						console.log(listUserRoleBI);
+
+						var listUserRoleBIIds = [];
+
+						// Remove user board instance role from groups
+						listUserRoleBI.forEach(function(userBIRole) {
+							listUserRoleBIIds.push(userBIRole._id);
+							// Get all groups with a user board instance role
+							Group.find({user_board_role: userBIRole._id}, function(err, grps) {
+								if(err) 
+									reject(err);
+								// Remove role user from groups
+								grps.forEach(function(grp) {
+									grps.user_board_role.splice({user_board_role: userBIRole._id}, 1);
+									grps.save(function(err) {
+										if(err) 
+											reject(err);
+										resolve(true);
+									});
+								});
+							});
+						});
+
+						UseRoleBoardInstance.remove({_id: {"$in": listUserRoleBIIds}}, function(err) {
+							if(err)
+								reject(err);
+							resolve(true);
+						});
+					} else
+						resolve(true);
+				});
+		    });
+
+		    var deleteUserFromGroupUsers = new Promise(function(resolve, reject) {
+		    	// Delete usre from all groups
+				Group.find({'users.user': req.params.user_id}, function(err, groups) {
+					console.log(groups);
+					if(groups.length > 0) {
+						groups.forEach(function(grp) {
+							// Delete user from all roles 
+							UserGroupRoles.remove({gruoup_id: grp._id, user_id: req.params.user_id}, function(err) {
+								if(err) 
+									reject(err);
+
+								// Remove old roles if exist
+					            grp.users.splice({'user': req.params.user_id}, 1);
+					            grp.save(function(err) {
+										if(err) 
+											reject(err);
+										resolve(true);
+									});
+							});
+						});
+					} else 
+						resolve(true);
+				});
+		    });
+
+
+			Promise.all([deleteUserFromBoardInstances, deleteUserFromGroupUsers]).then(function(rslt) {
+				User.remove({_id: req.params.user_id}, function(err, user) {
+					if (err)
+						return Utils.sendError(res, err);
+					res.json({message: Utils.Constants._MSG_DELETED_, details: user, code: Utils.Constants._CODE_DELETED_});
+				});
+			});
+
+		} else {
+			Utils.sendUnauthorized(req, res);
+			return;
+		}
+	});
+};
+
+// Login
+exports.login = function(req, res) {
+	var shasum = crypto.createHash('sha1');
+
+	var missing = Utils.checkFields(req.body, ["username", "password"]);
+	if (missing.length != 0)
+		return res.send({message: Utils.Constants._MSG_ARGS_, details: "Missing followwing properties : " + missing, code: Utils.Constants._CODE_KO_});
+	User.findOne({"username": req.body.username}, function(err, user) {
+		if (err)
+			return res.send({message: Utils.Constants._MSG_UNKNOWN_, details: err, code: _CODE_KO_});
+		shasum.update(req.body.password);
+		if (!user || user.password != shasum.digest('hex'))
+			return res.json({message: Utils.Constants._MSG_FAILED_, details: "Bad user and/or password", code: Utils.Constants._CODE_KO_});
+
+		// Generate token 
+		var token = jwt.sign({data: user._id, exp: Utils.Constants.TOKEN_TIME_LIFE }, Utils.Constants.BAYLIBRE_SECRET_KEY);
+		res.json({message: Utils.Constants._MSG_OK_, details:token , code: Utils.Constants._CODE_OK_});
+	});
+
+
+};
+
+//Logout
+// exports.logout = function(req, res) {
+// 	var missing = Utils.checkFields(req.body, ["username"]);
+// 	if (missing.length != 0)
+// 		return res.send({message: Utils.Constants._MSG_ARGS_, details: "Missing followwing properties : " + missing, code: Utils.Constants._CODE_ARGS_});
+// 	User.findOne({"username": req.body.username}, function(err, user) {
+// 		if (err)
+// 			return Utils.sendError(res, err);
+// 		if (user.user_tokens.indexOf(req.headers.authorization) < 0)
+// 			res.send({message: Utils.Constants._MSG_TOKEN_, details: 'Token provided is not associated to the specified user', code: Utils.Constants._CODE_OK_});
+// 		user.user_tokens.splice(user.user_tokens.indexOf(req.headers.authorization), 1);
+// 		user.save(function(err) {
+// 			if (err)
+// 				return Utils.sendError(res, err);
+// 			var obj = user.toObject();
+// 			delete obj['user_tokens'];
+// 			res.json({message: Utils.Constants._MSG_OK_, details: obj, code: Utils.Constants._CODE_OK_});
+// 		});
+// 	});
+// };
+
+// Forgot password
+exports.forgot = function(req, res) {
+	if (!req.body.hasOwnProperty('email') && !req.body.hasOwnProperty('username'))
+		return res.send({message: Utils.Constants._MSG_FAILED_, details: 'You must provide a [\'email\' or \'username\'] property into JSON body request in order to send reset password link', code: Utils.Constants._CODE_FAILED_});
+	var toSearch = ((req.body.hasOwnProperty('email')) ? "email" : "username");
+	User.findOne({[toSearch]: ((req.body.hasOwnProperty('email')) ? req.body.email : req.body.username)}, function(err, user) {
+		if (err)
+			return res.send({message: Utils.Constants.MSG_UNKNOWN_, details: err, code: Utils.Constants._CODE_UNKNOWN_});
+		if (!user || user === null)
+			return res.send({message: Utils.Constants._MSG_FAILED_, details: 'User not found by his ' + toSearch + ' : ' + ((req.body.hasOwnProperty('email')) ? req.body.email : req.body.username), code: Utils.Constants._CODE_FAILED_});
+
+		var forgotHash = randomString(32);
+		var forgot = new Forgot();
+
+		forgot.username = req.body.username;
+		forgot.date = Date.now() / 1000 | 0;
+		forgot.hash = forgotHash;
+		forgot.ip = req.connection.remoteAddress;
+		forgot.user_id = user.id;
+		forgot.used = false;
+
+		try {
+			var mail_text = Utils.loadFile(global.config.mail.forgotMail.templates.text);
+			var mail_html = Utils.loadFile(global.config.mail.forgotMail.templates.html);
+		} catch (err) {
+			return res.send({message: Utils.Constants._MSG_UNKNOWN_, details: 'Error while fetching mail template, action canceled', code: Utils.Constants._CODE_UNKNOWN_});
+		}
+		forgot.save(function(err) {
+			if (err)
+				return res.send({message: Utils.Constants._MSG_FAILED_, details: err, code: Utils.Constants._CODE_FAILED_});
+			var mailOptions = {
+				from: '"'+global.config.mail.forgotMail.settings.fromName+'"<'+global.config.mail.forgotMail.settings.fromAddress+'>',
+				to: user.email,
+				subject: global.config.mail.forgotMail.settings.subject,
+				text: Utils.parseForgotMail(mail_text, user, forgot, req, forgotHash),
+				html: Utils.parseForgotMail(mail_html, user, forgot, req, forgotHash)
+			};
+			res.json({message: Utils.Constants._MSG_OK_, details: "Reset password link for " + user.username + " will be sent to " + user.email, code: Utils.Constants._CODE_OK_});
+			Utils.getMailTransporter.sendMail(mailOptions, function(error, info) {
+				if (error)
+					return console.log(error);
+				console.log('Message sent: ' + info.response);
+			});
+		});	
+	});
+};
+
+// Use forgot token 
+exports.useForgotToken = function(req, res) {
+	Forgot.findById(req.params.forgot_id, function(err, forgot) {
+		if (err)
+			return Utils.sendError(res, err);
+		if (!forgot || forgot === null)
+			return res.send({message: Utils.Constants._MSG_FAILED_, details: "Bad forgot ID", code: Utils.Constants._CODE_FAILED_});
+		if (forgot.hash != req.params.hash)
+			return res.send({message: Utils.Constants._MSG_FAILED_, details: "Bad Hash provided", code: Utils.Constants._CODE_FAILED_});
+		if (forgot.used)
+			return res.send({message: Utils.Constants._MSG_FAILED_, details: 'This reset link has already been used', code: Utils.Constants._CODE_FAILED_});
+		if (eval(Date.now() / 1000 - forgot.date) >= (60 * 30))
+			return res.send({message: Utils.Constants._MSG_FAILED_, details: 'Link expired', code: Utils.Constants._CODE_FAILED_});
+		User.findById(forgot.user_id, function(err, user) {
+			if (err)
+				return Utils.sendError(res, err);
+			forgot.used = true;
+			forgot.save(function(err, forgot) {
+				if (err)
+					return Utils.sendError(res, err);
+				res.json({message: Utils.Constants._MSG_OK_, details: user, code: Utils.Constants._CODE_OK_});
+			});
+		});
+	});
+};
+
+// Get random string
+function randomString(len, charSet) {
+	charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var randomString = '';
+	for (var i = 0; i < len; i++) {
+		var randomPoz = Math.floor(Math.random() * charSet.length);
+		randomString += charSet.substring(randomPoz,randomPoz+1);
+	}
+	return randomString;
+}
+
+// Get connected user
+exports.getConnectedUser= function(req, res) {
+	if(null != req.login) {
+		res.json({login: req.login});
+	} else {
+		res.json({login: null});
+	}
+};

@@ -1,0 +1,101 @@
+<h3 class="page-title"> Users
+    <small>List of users</small>
+</h3>
+<div class="page-bar">
+    <ul class="page-breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="index.html">Home</a>
+            <i class="fa fa-angle-right"></i>
+        </li>
+        <li>
+            <span>Users</span>
+        </li>
+    </ul>
+    <div class="page-toolbar">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li>
+                    <a href="#/newUser">
+                        <i class="icon-plus"></i> Add new user</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN : OVERLAY -->
+<div class="row"> 
+    <div class="col-md-12">
+        <div class="portlet light portlet-fit bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class=" icon-layers font-green"></i>
+                    <span class="caption-subject font-green bold uppercase">Users</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="mt-element-card mt-card-round mt-element-overlay">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-show="users.length == 0">
+                            No user found!
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="user in users track by $index">
+                            <div class="mt-card-item">
+                                <div class="mt-card-avatar mt-overlay-1">
+                                    <!-- <img src="../assets/pages/img/avatars/team5.jpg" /> -->
+                                    <img ng-show="user.avatar" ng-src="{{user.avatar}}" />
+                                    <div class="mt-overlay">
+                                        <ul class="mt-info">
+                                            <li>
+                                                <a class="btn default btn-outline" href="javascript:;">
+                                                    <i class="icon-magnifier"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="btn default btn-outline" href="javascript:;">
+                                                    <i class="icon-link"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="mt-card-content">
+                                    <h3 class="mt-card-name">{{user.username}}</h3>
+                                    <p class="mt-card-desc font-grey-mint">{{user.last_name}} {{user.first_name}}</p>
+                                    <p class="mt-card-desc font-grey-mint">{{user.email}}</p>
+                                    <div class="mt-card-social">
+                                        <ul>
+                                            <li>
+                                                <a href="#/deleteUser/{{user._id}}">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <i class="icon-link"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#/editUser/{{user._id}}">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- END : OVERLAY -->
+                

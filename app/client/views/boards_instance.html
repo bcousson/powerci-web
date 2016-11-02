@@ -1,0 +1,92 @@
+<h3 class="page-title"> Boards instance
+    <small>List of boards instance available in the Labs</small>
+</h3>
+<div class="page-bar">
+    <ul class="page-breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="index.html">Home</a>
+            <i class="fa fa-angle-right"></i>
+        </li>
+        <li>
+            <span>Boards instance</span>
+        </li>
+    </ul>
+    <div class="page-toolbar">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li>
+                    <a href="#/newBoardInstance">
+                        <i class="icon-plus"></i> Add new board instance</a>
+                </li>
+               <!--  <li>
+                    <a href="#">
+                        <i class="icon-shield"></i> Another action</a>
+                </li> -->
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN : OVERLAY -->
+<div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-show="boardInstances.length == 0">
+        No boars instance found!
+    </div>
+   <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="boardInstance in boardInstances">
+        <div class="portlet light portlet-fit ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class=" icon-layers font-green"></i>
+                    
+                    <span class="caption-subject font-green bold uppercase">{{boardInstance.label}} {{boardInstance.model}}, {{boardInstance.version}}<pre class="mt-code"><div class="cbp-filter-counter">2</div><a href="#">{{boardInstance.provider_id.name}}</a></pre></span>
+                    <div class="caption-desc font-grey-cascade"> 
+                        <a href="#">
+                            <span class="photo">
+                                <img ng-show="boardInstance.created_by.avatar" ng-src="{{boardInstance.created_by.avatar}}" class="img-circle"/> </span>
+                            <span class="subject">
+                                <small>Created by: <span class="font-bold">{{boardInstance.created_by.last_name}} {{boardInstance.created_by.first_name}}</span> </small><br>
+                                <small class="text-muted" ng-bind="boardInstance.created_on | date:'MM.dd.yyyy, hh:mm a'"></small>
+                            </span>
+                            
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="mt-element-overlay">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mt-overlay-6">
+                                <!-- <img src="{{boardInstance.image}}" /> -->
+                                <img ng-show="boardInstance.image" ng-src="{{boardInstance.image}}"/>
+                                <div class="mt-overlay">
+                                    <h2>{{boardInstance.label}}</h2>
+                                    <p>
+                                        <a class="mt-info uppercase btn default btn-outline" href="#/boardInstance/{{boardInstance._id}}">Learn More</a>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="board-desc">
+                                <p ng-bind-html="boardInstance.description"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-group btn-group btn-group-justified">
+                <a href="javascript:;" class="btn font-yellow">
+                    <i class="icon-bubbles"></i> {{boardInstance.comments.length  | shortNumber}} </a>
+                <a href="#/boardInstance/{{boardInstance._id}}" class="btn font-blue">
+                    <i class="icon-bar-chart"></i> </a>
+                <a href="javascript:;" class="btn font-green">
+                    <i class="icon-eye"></i> {{boardInstance.nb_niews | shortNumber}} </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END : OVERLAY -->
+                

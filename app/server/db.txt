@@ -1,0 +1,107 @@
+/* Table actions*/
+
+// users actions
+db.actions.insert({title:"Create User",  description : "methode description",technical_name:"create_user"});
+db.actions.insert({title:"Get list Users",  description : "methode description",technical_name:"get_users"});
+db.actions.insert({title:"Get User by Id",  description : "methode description",technical_name:"get_user_by_id"});
+db.actions.insert({title:"Find user",  description : "methode description",technical_name:"find_user"});
+db.actions.insert({title:"Update User",  description : "methode description",technical_name:"update_user"});
+db.actions.insert({title:"delete User",  description : "methode description",technical_name:"delete_user"});
+db.actions.insert({title:"Get User",  description : "methode description",technical_name:"users_find_user"});
+
+// groups actions
+db.actions.insert({title:"Create group", description : "methode description", technical_name:"groupsControllerCreateGroup"});
+db.actions.insert({title:"Show all groups", description : "methode description", technical_name:"groupsControllerGetGroups"});
+db.actions.insert({title:"Show group deatil",  description : "methode description",technical_name:"groupsControllerGetGroup"});
+db.actions.insert({title:"Find group",  description : "methode description",technical_name:"groupsControllerFindGroup"});
+db.actions.insert({title:"Find user role",  description : "methode description",technical_name:"groupsControllerFindUserRole"});
+db.actions.insert({title:"Update group",  description : "methode description",technical_name:"groupsControllerUpdateGroup"});
+db.actions.insert({title:"Delete group",  description : "methode description",technical_name:"groupsControllerDeleteGroup"});
+db.actions.insert({title:"Add users to group",  description : "methode description",technical_name:"groupsControllerUserRole"});
+db.actions.insert({title:"Remove users from group",  description : "methode description",technical_name:"groupsControllerRemoveUser"});
+db.actions.insert({title:"Add Board instance to group",  description : "methode description",technical_name:"groupsControllerAddBoardInstance"});
+db.actions.insert({title:"Board instance detail",  description : "methode description",technical_name:"groupsControllerBoardInstanceDetails"});
+db.actions.insert({title:"Remove Board instance from group",  description : "methode description",technical_name:"groupsControllerRemoveBoardInstance"});
+db.actions.insert({title:"Add user role to board instance ",  description : "methode description",technical_name:"groupsControllerAddUserToBoardInstance"});
+db.actions.insert({title:"Remove user role from board instance ",  description : "methode description",technical_name:"groupsControllerRemoveUserFromBoardInstance"});
+
+//Board actions
+db.actions.insert({title:"Create board",  description : "methode description",technical_name:"boardControllerCreateBoard"});
+db.actions.insert({title:"Get all boards",  description : "methode description",technical_name:"boardControllerGetAllBoards"});
+db.actions.insert({title:"Get board by id",  description : "methode description",technical_name:"boardControllerGetBoardById"});
+db.actions.insert({title:"Update board",  description : "methode description",technical_name:"boardControllerUpdateBoard"});
+db.actions.insert({title:"Delete board",  description : "methode description",technical_name:"boardControllerDeleteBoard"});
+
+
+// Boards instance actions
+db.actions.insert({title:"Create board instance",  description : "methode description",technical_name:"board_instances_create_board_instcance"});
+db.actions.insert({title:"Get all boards instance",  description : "methode description",technical_name:"board_instances_get_all_board_instances"});
+db.actions.insert({title:"Get board instance by id",  description : "methode description",technical_name:"board_instances_get_board_instance_by_id"});
+db.actions.insert({title:"Get board instance",  description : "methode description",technical_name:"board_instances_find_board_instcance"});
+db.actions.insert({title:"Update board instance",  description : "methode description",technical_name:"board_instances_update_board_instance"});
+db.actions.insert({title:"delete board instance",  description : "methode description",technical_name:"board_instances_delete_board_instance"});
+
+// Categories actions
+db.actions.insert({title:"Get categories",  description : "methode description",technical_name:"categoriesControllerGetCategories"});
+db.actions.insert({title:"Get category by id",  description : "methode description",technical_name:"categoriesControllerGetCategoryById"});
+db.actions.insert({title:"Find category",  description : "methode description",technical_name:"categoriesControllerFindCategories"});
+db.actions.insert({title:"Update category",  description : "methode description",technical_name:"categoriesControllerUpdateCategory"});
+db.actions.insert({title:"Create category",  description : "methode description",technical_name:"categoriesControllerCreateCategory"});
+
+// Customer actions
+db.actions.insert({title:"Create customer",  description : "methode description",technical_name:"customersControllerCreateCustomer"});
+db.actions.insert({title:"Get all customers",  description : "methode description",technical_name:"customersControllerGetAllCustomers"});
+db.actions.insert({title:"Get customer by id",  description : "methode description",technical_name:"customersControllerGetCustomerById"});
+db.actions.insert({title:"Update customer",  description : "methode description",technical_name:"customersControllerUpdateCustomer"});
+db.actions.insert({title:"Delete customer",  description : "methode description",technical_name:"customersControllerDeleteCustomer"});
+
+// Labs actions
+db.actions.insert({title:"Create labs",  description : "methode description",technical_name:"labsControllerCreateLabs"});
+db.actions.insert({title:"Get labs by id",  description : "methode description",technical_name:"labsControllerGetLabsById"});
+db.actions.insert({title:"Update labs",  description : "methode description",technical_name:"labsControllerUpdateLabs"});
+db.actions.insert({title:"Delete labs",  description : "methode description",technical_name:"labsControllerDeleteLabs"});
+
+// Projects actions
+db.actions.insert({title:"Create project",  description : "methode description",technical_name:"projectsControllerCreateProject"});
+db.actions.insert({title:"Get all projects",  description : "methode description",technical_name:"projectsControllerGetAllProjects"});
+db.actions.insert({title:"Get project detail",  description : "methode description",technical_name:"projectsControllerGetProjectById"});
+db.actions.insert({title:"Update project",  description : "methode description",technical_name:"projectsControllerUpdateProject"});
+db.actions.insert({title:"Delete project",  description : "methode description",technical_name:"projectsControllerDeleteProject"});
+
+// Provider actions
+db.actions.insert({title:"Create provider",  description : "methode description",technical_name:"providerControllerCreateProvider"});
+db.actions.insert({title:"Get all providers",  description : "methode description",technical_name:"providerControllerGetProviders"});
+db.actions.insert({title:"Get provider detail",  description : "methode description",technical_name:"providerControllerGetProviderById"});
+db.actions.insert({title:"Find provider",  description : "methode description",technical_name:"providerControllerFindProvider"});
+db.actions.insert({title:"Update provider",  description : "methode description",technical_name:"providerControllerUpdateProvider"});
+db.actions.insert({title:"Delete provider",  description : "methode description",technical_name:"providerControllerDeleteProvider"});
+
+// Role actions
+db.actions.insert({title:"Create role",  description : "methode description",technical_name:"rolesControllerCreateRole"});
+db.actions.insert({title:"Get all roles",  description : "methode description",technical_name:"rolesControllerGetRoles"});
+db.actions.insert({title:"Get role by id",  description : "methode description",technical_name:"rolesControllerGetRoleById"});
+db.actions.insert({title:"Find role",  description : "methode description",technical_name:"rolesControllerFindRole"});
+db.actions.insert({title:"Get roles by broup id",  description : "methode description",technical_name:"rolesControllerGetRolesByGroupId"});
+db.actions.insert({title:"Update role",  description : "methode description",technical_name:"rolesControllerUpdateRole"});
+db.actions.insert({title:"Delete role",  description : "methode description",technical_name:"rolesControllerDeleteRole"});
+
+// Soc actions
+db.actions.insert({title:"Create soc",  description : "methode description",technical_name:"create_soc"});
+db.actions.insert({title:"Get all socs",  description : "methode description",technical_name:"get_all_socs"});
+db.actions.insert({title:"Update soc",  description : "methode description",technical_name:"update_soc"});
+db.actions.insert({title:"Get soc detail",  description : "methode description",technical_name:"get_soc_by_id"});
+db.actions.insert({title:"Delete soc",  description : "methode description",technical_name:"delete_soc"});
+
+// Test case actions
+db.actions.insert({title:"Create test case",  description : "methode description",technical_name:"create_test_case"});
+db.actions.insert({title:"Get all tests case",  description : "methode description",technical_name:"get_all_tests_case"});
+db.actions.insert({title:"Get test case by id",  description : "methode description",technical_name:"get_test_case_by_id"});
+db.actions.insert({title:"Update test case",  description : "methode description",technical_name:"update_test_case"});
+db.actions.insert({title:"Delete test case",  description : "methode description",technical_name:"delete_test_case"});
+
+// Test suite actions
+db.actions.insert({title:"Create test suite",  description : "methode description",technical_name:"create_test_suite"});
+db.actions.insert({title:"Get all tests suite",  description : "methode description",technical_name:"get_all_tests_suite"});
+db.actions.insert({title:"Get test suite by id",  description : "methode description",technical_name:"get_test_suite_by_id"});
+db.actions.insert({title:"Update test suite",  description : "methode description",technical_name:"update_test_suite"});
+db.actions.insert({title:"Delete test suite",  description : "methode description",technical_name:"delete_test_suite"});

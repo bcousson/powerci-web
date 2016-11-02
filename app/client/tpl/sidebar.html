@@ -1,0 +1,78 @@
+<div class="page-sidebar navbar-collapse collapse">
+    <!-- BEGIN SIDEBAR MENU -->
+    <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+    <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+    <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+    <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+    <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+    <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" ng-class="{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
+        <li class="start ">
+             <a href="#">
+                <i class="fa fa-tasks"></i>
+                <span class="title">Labs</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/boards" class="nav-link nav-toggle">
+                <i class="icon-settings"></i>
+                <span class="title">Boards</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/boardsInstance" class="nav-link nav-toggle">
+                <i class="icon-settings"></i>
+                <span class="title">Boards instance</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/socs">
+                <i class="icon-puzzle"></i>
+                <span class="title">SoCs</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/sw_release" id="sidebar_menu_link_profile">
+                <i class="fa fa-clone"></i>
+                <span class="title">SW release</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/file_upload.html">
+                <i class="fa fa-reorder"></i>
+                <span class="title">Projects list</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/datatables/ajax.html">
+                <i class="fa fa-cogs"></i>
+                <span class="title">SETUP</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/providers">
+                <i class="fa fa-cogs"></i>
+                <span class="title">Providers</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/categories">
+                <i class="fa fa-cogs"></i>
+                <span class="title">Categories</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/users">
+                <i class="fa fa-user"></i>
+                <span class="title">Users</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#/groups">
+                <i class="fa fa-group"></i>
+                <span class="title">Groups</span>
+            </a>
+        </li>
+    </ul>
+    <!-- END SIDEBAR MENU -->
+</div>

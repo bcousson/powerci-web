@@ -1,0 +1,88 @@
+<h3 class="page-title"> Groups
+    <small>List of groups</small>
+</h3>
+<div class="page-bar">
+    <ul class="page-breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="index.html">Home</a>
+            <i class="fa fa-angle-right"></i>
+        </li>
+        <li>
+            <span>Groups</span>
+        </li>
+    </ul>
+    <div class="page-toolbar">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li>
+                    <a href="#/newGroup">
+                        <i class="icon-plus"></i> Add new group</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN : OVERLAY -->
+<div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-show="groups.length == 0">
+        No group found!
+    </div>
+   <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="group in groups track by $index">
+        <div class="portlet light portlet-fit ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class=" icon-layers font-green"></i>
+                    
+                    <span class="caption-subject font-green bold uppercase">{{group.name}}<pre class="mt-code"><div class="cbp-filter-counter">{{group.users_role.length}}</div><a href="#">Usres</a></pre></span>
+                    <div class="caption-desc font-grey-cascade"> 
+                        <a href="#">
+                            <span class="photo">
+                                <img ng-show="group.created_by.avatar" ng-src="{{group.created_by.avatar}}" class="img-circle" alt=""> </span>
+                            <span class="subject">
+                                <small>Created by: <span class="font-bold">{{group.created_by.last_name}} {{group.created_by.first_name}}</span> </small><br>
+                                <small class="text-muted" ng-bind="group.created_on | date:'MM.dd.yyyy, hh:mm a'"></small>
+                            </span>
+                            
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="mt-element-overlay">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mt-overlay-6" ng-show="group.image">
+                                <img ng-show="group.image" ng-src="{{group.image}}" style="background: #FFF;" />
+                                <div class="mt-overlay">
+                                    <h2>{{group.name}}</h2>
+                                </div>
+                            </div>
+                            <div class="board-desc">
+                                <p ng-bind-html="group.description"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Show if baylibre user connected -->
+            <div class="btn-group btn-group btn-group-justified">
+                <a href="#/deleteGroup/{{group._id}}" class="btn font-red">
+                    <i class="fa fa-trash-o"></i> delete </a>
+                <a href="#/detailGroup/{{group._id}}" class="btn font-yellow">
+                    <i class="fa fa-bars"></i> detail </a>
+                <a href="#/editGroup/{{group._id}}" class="btn font-green">
+                    <i class="fa fa-edit"></i> edit </a>
+            </div>
+            <!-- End -->
+        </div>
+    </div>
+</div>
+
+
+<!-- END : OVERLAY -->
+                

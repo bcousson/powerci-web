@@ -1,0 +1,86 @@
+<h3 class="page-title"> Providers
+    <small>List of providers</small>
+</h3>
+<div class="page-bar">
+    <ul class="page-breadcrumb">
+        <li>
+            <i class="icon-home"></i>
+            <a href="index.html">Home</a>
+            <i class="fa fa-angle-right"></i>
+        </li>
+        <li>
+            <span>Providers</span>
+        </li>
+    </ul>
+    <div class="page-toolbar">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Actions
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li>
+                    <a href="#/newProvider">
+                        <i class="icon-plus"></i> Add new provider</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN : OVERLAY -->
+<div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-show="providers.length == 0">
+        No provider found!
+    </div>
+   <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="provider in providers">
+        <div class="portlet light portlet-fit ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class=" icon-layers font-green"></i>
+                    
+                    <span class="caption-subject font-green bold uppercase">{{provider.name}}<pre class="mt-code"><div class="cbp-filter-counter">2</div><a href="#">Boards</a></pre></span>
+                    <div class="caption-desc font-grey-cascade"> 
+                        <a href="#">
+                            <span class="photo">
+                                <img ng-show="provider.created_by.avatar" ng-src="{{provider.created_by.avatar}}" class="img-circle" alt=""> </span>
+                            <span class="subject">
+                                <small>Created by: <span class="font-bold">{{provider.created_by.last_name}} {{provider.created_by.first_name}}</span> </small><br>
+                                <small class="text-muted" ng-bind="provider.created_on | date:'MM.dd.yyyy, hh:mm a'"></small>
+                            </span>
+                            
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="mt-element-overlay">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mt-overlay-6" ng-show="provider.image">
+                                <img ng-show="provider.image" ng-src="{{provider.image}}" style="background: #FFF;" />
+                                <div class="mt-overlay">
+                                    <h2>{{provider.name}}</h2>
+                                </div>
+                            </div>
+                            <div class="board-desc">
+                                <p ng-bind-html="provider.description"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Show if baylibre user connected -->
+            <div class="btn-group btn-group btn-group-justified">
+                <a href="#/deleteProvider/{{provider._id}}" class="btn font-yellow">
+                    <i class="fa fa-remove"></i> delete </a>
+                <a href="#/editProvider/{{provider._id}}" class="btn font-green">
+                    <i class="fa fa-edit"></i> edit </a>
+            </div>
+            <!-- End -->
+        </div>
+    </div>
+</div>
+
+
+<!-- END : OVERLAY -->
+                
